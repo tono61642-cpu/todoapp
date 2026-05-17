@@ -26,5 +26,5 @@ export interface SnsScore {
 export interface NewsResponse {
   articles: NewsArticle[];
   updatedAt: string;
-  source: "api" | "mock";
+  source: "rss" | "mock";
 }

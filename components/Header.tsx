@@ -4,7 +4,7 @@ import { TrendingUp, RefreshCw } from "lucide-react";
 
 interface HeaderProps {
   updatedAt: string;
-  source: "api" | "mock";
+  source: "rss" | "mock";
   onRefresh: () => void;
   isRefreshing: boolean;
 }
@@ -45,7 +45,7 @@ export default function Header({ updatedAt, source, onRefresh, isRefreshing }: H
               <span className="text-gradient">SNSトレンドニュース</span>
             </h1>
             <p className="text-gray-400 text-sm">
-              SNSで最も注目されているニュース TOP5
+              SNSで最も注目されているニュース TOP10
             </p>
           </div>
 
