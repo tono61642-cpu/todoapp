@@ -83,12 +83,15 @@ function pickImage(category: string, title: string): string {
 export function generateSnsScore(article: {
   publishedAt: string;
   title: string;
-  rank: number;
 }): SnsScore {
   const hoursAgo = (Date.now() - new Date(article.publishedAt).getTime()) / 3600000;
   const recencyBoost = Math.max(0, 1 - hoursAgo / 24);
-  const titleLength = article.title.length;
-  const seed = titleLength * 1234 + article.rank * 567;
+
+  // タイトル全体をシードに使い、記事ごとに固有のスコアを生成
+  let seed = 0;
+  for (let i = 0; i < article.title.length; i++) {
+    seed = Math.imul(31, seed) + article.title.charCodeAt(i);
+  }
   const pseudoRandom = (n: number) => {
     let h = seed ^ (n * 2654435769);
     h = Math.imul(h ^ (h >>> 16), 0x45d9f3b);
@@ -96,7 +99,8 @@ export function generateSnsScore(article: {
     return Math.abs(h ^ (h >>> 16)) % 1000;
   };
 
-  const base = Math.floor(30000 + pseudoRandom(1) * 100 + recencyBoost * 50000);
+  // 新しい記事ほど高スコア、タイトルの個性でばらつきを出す
+  const base = Math.floor(20000 + pseudoRandom(1) * 80 + recencyBoost * 60000);
   const twitter = Math.floor(base * (0.35 + (pseudoRandom(2) % 15) / 100));
   const facebook = Math.floor(base * (0.20 + (pseudoRandom(3) % 10) / 100));
   const instagram = Math.floor(base * (0.25 + (pseudoRandom(6) % 12) / 100));
@@ -117,22 +121,29 @@ export function processArticles(rawArticles: Array<{
   publishedAt: string;
   source: { name: string };
 }>): NewsArticle[] {
-  return rawArticles.slice(0, 10).map((article, index) => {
-    const rank = index + 1;
+  // 全記事のスコアを先に計算
+  const scored = rawArticles.map((article) => {
     const category = detectCategory(article.title, article.description);
-    const snsScore = generateSnsScore({ publishedAt: article.publishedAt, title: article.title, rank });
+    const snsScore = generateSnsScore({ publishedAt: article.publishedAt, title: article.title });
     const urlToImage = article.urlToImage ?? pickImage(category, article.title);
+    return { ...article, category, snsScore, urlToImage };
+  });
 
+  // シェア数スコア降順で並び替えてTOP10を決定
+  scored.sort((a, b) => b.snsScore.total - a.snsScore.total);
+
+  return scored.slice(0, 10).map((article, index) => {
+    const rank = index + 1;
     return {
       id: `article-${rank}`,
       title: article.title,
       description: article.description,
       url: article.url,
-      urlToImage,
+      urlToImage: article.urlToImage,
       publishedAt: article.publishedAt,
       source: article.source,
-      category,
-      snsScore,
+      category: article.category,
+      snsScore: article.snsScore,
       rank,
     };
   });
