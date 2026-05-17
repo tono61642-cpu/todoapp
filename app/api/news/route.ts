@@ -6,9 +6,12 @@ import { NewsResponse } from "@/types/news";
 export const revalidate = 300;
 
 const RSS_FEEDS = [
-  { url: "https://www3.nhk.or.jp/rss/news/cat0.xml", source: "NHKニュース" },
-  { url: "https://www3.nhk.or.jp/rss/news/cat5.xml", source: "NHK経済" },
-  { url: "https://www3.nhk.or.jp/rss/news/cat7.xml", source: "NHKスポーツ" },
+  { url: "https://news.yahoo.co.jp/rss/topics/top-picks.xml", source: "Yahoo!ニュース" },
+  { url: "https://news.yahoo.co.jp/rss/topics/domestic.xml", source: "Yahoo!国内" },
+  { url: "https://news.yahoo.co.jp/rss/topics/business.xml", source: "Yahoo!経済" },
+  { url: "https://news.yahoo.co.jp/rss/topics/entertainment.xml", source: "Yahoo!エンタメ" },
+  { url: "https://news.yahoo.co.jp/rss/topics/sports.xml", source: "Yahoo!スポーツ" },
+  { url: "https://news.yahoo.co.jp/rss/topics/it.xml", source: "Yahoo!テクノロジー" },
 ];
 
 function parseRSS(xml: string, sourceName: string) {
