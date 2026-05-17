@@ -18,6 +18,7 @@ export interface SnsScore {
   twitter: number;
   facebook: number;
   line: number;
+  instagram: number;
   trend: "up" | "down" | "stable";
   trendPercent: number;
 }

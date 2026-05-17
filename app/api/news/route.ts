@@ -20,7 +20,7 @@ export async function GET() {
   try {
     const url = new URL("https://newsapi.org/v2/top-headlines");
     url.searchParams.set("country", "jp");
-    url.searchParams.set("pageSize", "10");
+    url.searchParams.set("pageSize", "15");
     url.searchParams.set("apiKey", apiKey);
 
     const res = await fetch(url.toString(), {

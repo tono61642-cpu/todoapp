@@ -35,15 +35,16 @@ export function generateSnsScore(article: {
   };
 
   const base = Math.floor(30000 + pseudoRandom(1) * 100 + recencyBoost * 50000);
-  const twitter = Math.floor(base * (0.45 + (pseudoRandom(2) % 20) / 100));
-  const facebook = Math.floor(base * (0.25 + (pseudoRandom(3) % 15) / 100));
-  const line = base - twitter - facebook;
+  const twitter = Math.floor(base * (0.35 + (pseudoRandom(2) % 15) / 100));
+  const facebook = Math.floor(base * (0.20 + (pseudoRandom(3) % 10) / 100));
+  const instagram = Math.floor(base * (0.25 + (pseudoRandom(6) % 12) / 100));
+  const line = base - twitter - facebook - instagram;
 
   const trendOptions: Array<"up" | "down" | "stable"> = ["up", "up", "up", "stable", "down"];
   const trend = trendOptions[pseudoRandom(4) % trendOptions.length];
   const trendPercent = Math.floor(10 + pseudoRandom(5) % 290);
 
-  return { total: base, twitter, facebook, line, trend, trendPercent };
+  return { total: base, twitter, facebook, line, instagram, trend, trendPercent };
 }
 
 export function processArticles(rawArticles: Array<{
@@ -54,7 +55,7 @@ export function processArticles(rawArticles: Array<{
   publishedAt: string;
   source: { name: string };
 }>): NewsArticle[] {
-  return rawArticles.slice(0, 5).map((article, index) => {
+  return rawArticles.slice(0, 10).map((article, index) => {
     const rank = index + 1;
     const category = detectCategory(article.title, article.description);
     const snsScore = generateSnsScore({ publishedAt: article.publishedAt, title: article.title, rank });
